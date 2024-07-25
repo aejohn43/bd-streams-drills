@@ -2,9 +2,12 @@
 import utilities.Trader;
 import utilities.Transaction;
 
+import java.io.FilterOutputStream;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Use the provided utilities.Trader and utilities.Transaction data to implement the class's methods.
@@ -30,7 +33,11 @@ public class TransactionQuestions {
      * @return a list of all transactions that occurred in 2011
      */
     public List<Transaction> transactions2011() {
-        throw new UnsupportedOperationException();
+        return transactions.stream()
+                .filter(transaction -> {return transaction.getYear() == 2011;})
+                .sorted(Comparator.comparing(Transaction::getValue))
+                .collect(Collectors.toList());
+
     }
 
     /**
@@ -38,7 +45,10 @@ public class TransactionQuestions {
      * @return A list of all unique cities traders work in
      */
     public List<String> uniqueCities() {
-        throw new UnsupportedOperationException();
+        return transactions.stream()
+                .map(transaction -> {return transaction.getTrader().getCity();})
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -46,7 +56,12 @@ public class TransactionQuestions {
      * @return a list of all traders based in cambridge
      */
     public List<Trader> cambridgeTraders() {
-        throw new UnsupportedOperationException();
+        return transactions.stream()
+                .map(Transaction::getTrader)
+                .filter(trader -> {return trader.getCity().equals("Cambridge");})
+                .sorted(Comparator.comparing(Trader::getName))
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -56,7 +71,11 @@ public class TransactionQuestions {
      * @return a concatenated string of all trader names
      */
     public String traderNames() {
-        throw new UnsupportedOperationException();
+        return transactions.stream()
+                .map(transaction -> {return  transaction.getTrader().getName();})
+                .distinct()
+                .sorted()
+                .collect(Collectors.joining());
     }
 
     /**
@@ -64,14 +83,19 @@ public class TransactionQuestions {
      * @return true, if any traders are Milan based
      */
     public boolean isMilanBased() {
-        throw new UnsupportedOperationException();
+       Optional <Transaction> optional = transactions.stream()
+               .filter(transaction -> {return transaction.getTrader().getCity().equals("Milan");})
+               .findAny();
+        return optional.isPresent();
     }
 
     /**
      * Print all transactions' values from the traders living in Cambridge.
      */
     public void printCambridgeTransactions() {
-
+         transactions.stream()
+                .filter(transaction -> {return transaction.getTrader().getCity().equals("Cambridge");})
+                .forEach(transaction -> System.out.println(transaction.toString()));
     }
 
     /**
@@ -79,7 +103,9 @@ public class TransactionQuestions {
      * @return An optional with the highest value of a trade, if a trade occurred.
      */
     public Optional<Integer> highestValueTrade() {
-        throw new UnsupportedOperationException();
+        return transactions.stream()
+                .map(Transaction::getValue)
+                .max(Comparator.naturalOrder());
     }
 
     /**
@@ -87,6 +113,7 @@ public class TransactionQuestions {
      * @return An optional with the transaction with the smallest value, if a transaction exists.
      */
     public Optional<Transaction> smallestTransaction() {
-        throw new UnsupportedOperationException();
+        return transactions.stream()
+                .min(Comparator.comparing(Transaction::getValue));
     }
 }
