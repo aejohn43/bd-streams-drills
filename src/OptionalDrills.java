@@ -13,7 +13,10 @@ public class OptionalDrills {
      * @param menu - the list of dishes to look through
      */
     public static void printOutExampleVegetarianDish(List<Dish> menu) {
-        throw new UnsupportedOperationException();
+               Optional<Dish> vegetarianDish =  menu.stream()
+                .filter(Dish::isVegetarian)
+                .findAny();
+        vegetarianDish.ifPresent(dish -> System.out.println(dish.getName()));
     }
 
     /**
@@ -22,7 +25,10 @@ public class OptionalDrills {
      * @return the name of the dish if it exists
      */
     public static Optional<String> getDishName(Dish dish) {
-        throw new UnsupportedOperationException();
+        if (dish == null){
+            return Optional.empty();
+        }
+        return Optional.ofNullable(dish.getName());
     }
 
     /**
@@ -31,7 +37,8 @@ public class OptionalDrills {
      * @return The name of the insurance if it exists
      */
     public static Optional<String> getExistingInsuranceName(Car car) {
-        throw new UnsupportedOperationException();
+        Optional<Insurance> insurance = car.getInsurance();
+        return insurance.map(Insurance::getName);
     }
 
     /**
@@ -41,7 +48,11 @@ public class OptionalDrills {
      * @return the name of the cheapest insurance if it exists
      */
     public static Optional<String> findCheapestInsuranceName(Car car) {
-        throw new UnsupportedOperationException();
+        Insurance cheapest = otherService(car);
+        if (cheapest == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(cheapest.getName());
     }
 
     /**
@@ -52,13 +63,15 @@ public class OptionalDrills {
      * @return the name of the car's cheapest insurance if it and the car exist
      */
     public static Optional<String> findCheapestInsuranceName(Optional<Car> car) {
-        throw new UnsupportedOperationException();
+        return car.map(value -> safeOtherService(value).getName());
     }
 
     /**
      * Tries to find the cheapest insurance, may be null.
      */
     private static Insurance otherService(Car car) {
+        if (car.getInsurance().isPresent())
+            return car.getInsurance().get();
         return null;
     }
 
